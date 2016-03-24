@@ -12,11 +12,24 @@ meta_css = 'p.repo-list-meta'
 languages_css = '.select-menu-item-text.js-select-button-text.js-navigation-open'
 languages = []
 
+class GitTrendsError(Exception):
+
+    def __init__(self, message):
+        super(GitTrendsError, self).__init__()
+        self.message = message
+
+    def __str__(self):
+        return '%s' % (self.message)
+
 if not languages:
-    file = open('languages', 'r')
+    import os
+    path = os.path.dirname(os.path.realpath(__file__)) + '/languages'
+    file = open(path, 'r')
     with file: 
         languages = [language.strip() for language in file]
     file.close()
+    if not language:
+        raise GitTrendsError('Failed to load languages list')
 
 def select(item, css):
     return item.cssselect(css)
@@ -55,11 +68,9 @@ def get_langs(tree):
 
 def get_trends(period='daily', language=''):
     if period not in periods:
-        return [] # TODO: Throw!
-    if language.lower() not in languages:
-        print languages
-        print 'Wrong language name'
-        return [] # TODO: Throw!
+        raise GitTrendsError('Wrong period name: %s' % period)
+    if language and language.lower() not in languages:
+        raise GitTrendsError('Wrong language name: %s ' % language)
     url = githubtrends + '/' + language + '?since=' + period
     page = requests.get(url)
     tree = html.fromstring(page.content)
