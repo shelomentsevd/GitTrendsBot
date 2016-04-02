@@ -1,7 +1,7 @@
 # Author: Dmitriy Shelomentsev (shelomentsev@protonmail.ch)
 # -*- coding: utf-8 -*-
 from telegram.ext import Updater
-from telegram import Emoji
+from telegram import Emoji, ParseMode
 import gittrends as git
 import logging
 import ConfigParser as cp
@@ -49,17 +49,23 @@ class GitTrendsBot:
 
     def __trends_wrap(self, period, language=''):
         trends = list()
+        description = (
+            '*Name*: %s\n'
+            '*Description*: %s\n'
+            '*Language*: %s\n'
+            '%s\n')
+        
         try:
             trends = git.get_trends(period, language)
         except Exception as e:
             logger.exception(e)
 
-        repos = ["Name: %s\nDescription: %s\nLanguage: %s\n%s" % (repo['name'],
-                                                                  repo['description'],
-                                                                  repo['language'],
-                                                                  re.sub(u'stars',
-                                                                  Emoji.WHITE_MEDIUM_STAR.decode('utf-8'),
-                                                                  repo['stars'])) for repo in trends]
+        repos = [description % (repo['name'],
+                                repo['description'],
+                                repo['language'],
+                                re.sub(u'stars',
+                                Emoji.WHITE_MEDIUM_STAR.decode('utf-8'),
+                                repo['stars'])) for repo in trends]
 
         return '\n\n'.join(repos)
 
@@ -82,7 +88,7 @@ class GitTrendsBot:
             result = self.__trends_wrap('daily', args[0])
         else:
             result = self.__trends_wrap('daily')
-        bot.sendMessage(update.message.chat_id, text=result)
+        bot.sendMessage(update.message.chat_id, text=result, parse_mode=ParseMode.MARKDOWN)
 
     def __week(self, bot, update, args):
         self.__logger_wrap(update.message, 'week')
@@ -91,7 +97,7 @@ class GitTrendsBot:
             result = self.__trends_wrap('weekly', args[0])
         else:
             result = self.__trends_wrap('weekly')
-        bot.sendMessage(update.message.chat_id, text=result)
+        bot.sendMessage(update.message.chat_id, text=result, parse_mode=ParseMode.MARKDOWN)
 
     def __month(self, bot, update, args):
         self.__logger_wrap(update.message, 'month')
@@ -100,8 +106,8 @@ class GitTrendsBot:
             result = self.__trends_wrap('monthly', args[0])
         else:
             result = self.__trends_wrap('monthly')
-        bot.sendMessage(update.message.chat_id, text=result)
-        
+        bot.sendMessage(update.message.chat_id, text=result, parse_mode=ParseMode.MARKDOWN)
+
     def __unknow(self, bot, update):
         self.__logger_wrap(update.message, 'unknow')
 
@@ -129,7 +135,6 @@ def main():
 
     bot = GitTrendsBot(bot_token, botan_token)
     bot.idle()
-
 
 
 if __name__ == '__main__':
