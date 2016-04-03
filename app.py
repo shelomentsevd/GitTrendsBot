@@ -87,7 +87,7 @@ class GitTrendsBot:
 
     def __start(self, bot, update, args):
         self.__logger_wrap(update.message, 'start')
-        self.sendMessage(update.message.chat_id, text=self.__help_text)
+        bot.sendMessage(update.message.chat_id, text=self.__help_text)
 
     def __help(self, bot, update):
         self.__logger_wrap(update.message, 'help')
