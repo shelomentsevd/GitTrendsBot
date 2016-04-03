@@ -17,6 +17,21 @@ logger = logging.getLogger(__name__)
 
 
 class GitTrendsBot:
+    __about_text = (
+        'Shows GitHub trending repositories from: http://github.com/trending\n'
+        'Written \'Just for Fun\' by [ShelomentsevD](https://github.com/shelomentsevd)\n'
+        '[Source code here](https://github.com/shelomentsevd/GitTrendsBot)'
+    )
+
+    __help_text = (
+        'Supports commands:\n'
+        '/today [language] - shows today trending repositories written in [language]\n'
+        '/week [language] - same as /today\n'
+        '/month [language] - same as previous two\n'
+        '/help - this text\n'
+        '/about - bot information\n'
+    )
+
     def __init__(self, telegram, botan=None):
         if botan:
             from telegram.utils.botan import Botan
@@ -72,15 +87,15 @@ class GitTrendsBot:
 
     def __start(self, bot, update, args):
         self.__logger_wrap(update.message, 'start')
-        pass
+        self.sendMessage(update.message.chat_id, text=self.__help_text)
 
     def __help(self, bot, update):
         self.__logger_wrap(update.message, 'help')
-        pass
+        bot.sendMessage(update.message.chat_id, text=self.__help_text)
 
     def __about(self, bot, update):
         self.__logger_wrap(update.message, 'about')
-        pass
+        bot.sendMessage(update.message.chat_id, text=self.__about_text, parse_mode=ParseMode.MARKDOWN)
 
     def __today(self, bot, update, args):
         self.__logger_wrap(update.message, 'today')
