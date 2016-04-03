@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Ignore configuration
+configuration.ini
+
 # Distribution / packaging
 .Python
 env/
