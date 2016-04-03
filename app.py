@@ -50,10 +50,10 @@ class GitTrendsBot:
     def __trends_wrap(self, period, language=''):
         trends = list()
         description = (
-            '*Name*: %s\n'
+            '*Name*: [%s](http://github.com/%s)\n'
             '*Description*: %s\n'
             '*Language*: %s\n'
-            '%s\n')
+            '%s')
         
         try:
             trends = git.get_trends(period, language)
@@ -61,6 +61,7 @@ class GitTrendsBot:
             logger.exception(e)
 
         repos = [description % (repo['name'],
+                                repo['name'],
                                 repo['description'],
                                 repo['language'],
                                 re.sub(u'stars',
